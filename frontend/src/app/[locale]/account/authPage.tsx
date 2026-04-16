@@ -33,28 +33,33 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
   });
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
 
   const validate = async () => {
     if (!isValidEmail(user.email)) {
+      setInfoMessage('');
       setErrorMessage(messages.invalidEmail);
       return;
     }
 
     if (!isValidPassword(user.password)) {
+      setInfoMessage('');
       setErrorMessage(messages.invalidPassword);
       return;
     }
 
     if (isSignup) {
       if (!user.username) {
+        setInfoMessage('');
         setErrorMessage(messages.usernameEmpty);
         return;
       }
 
       if (user.password !== confirmPassword) {
+        setInfoMessage('');
         setErrorMessage(messages.passwordDoesNotMatch);
         return;
       }
@@ -64,26 +69,50 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
   };
 
   const submit = async () => {
-    let token;
     if (isSignup) {
       try {
-        token = await signUp(user);
-      } catch {
+        const result = await signUp(user);
+        if (result.requiresApproval) {
+          setErrorMessage('');
+          setInfoMessage(messages.signupPendingApproval);
+          return;
+        }
+        if (result.access_token && result.expires_at) {
+          const token = {
+            access_token: result.access_token,
+            expires_at: result.expires_at,
+            user: result.user,
+          };
+          context.setToken(token);
+          context.storeTokenToLocalStorage(token);
+          router.push('/account', { locale: locale });
+          return;
+        }
         setErrorMessage(messages.signupError);
+        return;
+      } catch (error) {
+        setInfoMessage('');
+        setErrorMessage(error instanceof Error ? error.message : messages.signupError);
         return;
       }
     } else {
+      let token;
       try {
         token = await signIn(user);
-      } catch {
+      } catch (error) {
+        setInfoMessage('');
+        if (error instanceof Error && error.message === 'Approval required') {
+          setErrorMessage(messages.approvalPending);
+          return;
+        }
         setErrorMessage(messages.signinError);
         return;
       }
-    }
 
-    context.setToken(token);
-    context.storeTokenToLocalStorage(token);
-    router.push('/account', { locale: locale });
+      context.setToken(token);
+      context.storeTokenToLocalStorage(token);
+      router.push('/account', { locale: locale });
+    }
   };
 
   const handleSignInAsGuest = async () => {
@@ -111,6 +140,7 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
         </CardHeader>
         <CardBody className="overflow-visible px-4 pt-0 pb-4">
           <form>
+            {infoMessage && <div className="my-3 text-success">{infoMessage}</div>}
             {errorMessage && <div className="my-3 text-danger">{errorMessage}</div>}
             <Input
               isRequired
@@ -119,6 +149,8 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
               autoComplete="email"
               className="mt-3"
               onChange={(e) => {
+                setInfoMessage('');
+                setErrorMessage('');
                 setUser({
                   ...user,
                   email: e.target.value,
@@ -133,6 +165,8 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
                 autoComplete="username"
                 className="mt-3"
                 onChange={(e) => {
+                  setInfoMessage('');
+                  setErrorMessage('');
                   setUser({
                     ...user,
                     username: e.target.value,
@@ -152,6 +186,8 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
                 </button>
               }
               onChange={(e) => {
+                setInfoMessage('');
+                setErrorMessage('');
                 setUser({
                   ...user,
                   password: e.target.value,
@@ -171,6 +207,8 @@ export default function AuthPage({ isSignup, messages, locale }: Props) {
                   </button>
                 }
                 onChange={(e) => {
+                  setInfoMessage('');
+                  setErrorMessage('');
                   setConfirmPassword(e.target.value);
                 }}
               />

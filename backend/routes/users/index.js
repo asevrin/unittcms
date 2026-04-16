@@ -11,7 +11,7 @@ export default function (sequelize) {
   router.get('/', verifySignedIn, verifyAdmin, async (req, res) => {
     try {
       const users = await User.findAll({
-        attributes: ['id', 'email', 'username', 'role', 'avatarPath'],
+        attributes: ['id', 'email', 'username', 'role', 'isApproved', 'avatarPath'],
       });
       res.json(users);
     } catch (error) {

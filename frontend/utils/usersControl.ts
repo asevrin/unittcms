@@ -76,6 +76,34 @@ async function updateUserRole(jwt: string, userId: number, newRole: number) {
   }
 }
 
+async function updateUserApproval(jwt: string, userId: number, isApproved: boolean) {
+  const updateUserData = {
+    isApproved,
+  };
+
+  const fetchOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${jwt}`,
+    },
+    body: JSON.stringify(updateUserData),
+  };
+
+  const url = `${apiServer}/users/${userId}/approval`;
+
+  try {
+    const response = await fetch(url, fetchOptions);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error: unknown) {
+    logError('Error updating user approval:', error);
+  }
+}
+
 async function updateUsername(jwt: string, username: string) {
   const updateData = {
     username,
@@ -223,6 +251,7 @@ export {
   findUser,
   searchUsers,
   updateUserRole,
+  updateUserApproval,
   updateUsername,
   updatePassword,
   uploadAvatar,

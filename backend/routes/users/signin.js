@@ -22,6 +22,10 @@ export default function (sequelize) {
         return res.status(401).json({ error: 'Authentication failed' });
       }
 
+      if (!user.isApproved) {
+        return res.status(403).json({ error: 'Approval required' });
+      }
+
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return res.status(401).json({ error: 'Authentication failed' });
@@ -31,7 +35,16 @@ export default function (sequelize) {
       });
       const expiresAt = Date.now() + 3600 * 1000 * 24; // expire date(ms)
 
-      res.status(200).json({ access_token: accessToken, expires_at: expiresAt, user });
+      const safeUser = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        isApproved: user.isApproved,
+        avatarPath: user.avatarPath,
+      };
+
+      res.status(200).json({ access_token: accessToken, expires_at: expiresAt, user: safeUser });
     } catch (error) {
       console.error(error);
       res.status(500).send('Sign up failed');

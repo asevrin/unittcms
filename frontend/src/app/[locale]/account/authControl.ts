@@ -1,10 +1,10 @@
-import { UserType } from '@/types/user';
+import { SignUpResponse, TokenType, UserType } from '@/types/user';
 import Config from '@/config/config';
 import { roles } from '@/config/selection';
 import { logError } from '@/utils/errorHandler';
 const apiServer = Config.apiServer;
 
-async function signUp(newUser: UserType) {
+async function signUp(newUser: UserType): Promise<SignUpResponse> {
   const fetchOptions = {
     method: 'POST',
     headers: {
@@ -18,17 +18,17 @@ async function signUp(newUser: UserType) {
   try {
     const response = await fetch(url, fetchOptions);
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || `HTTP error! Status: ${response.status}`);
     }
-    const token = await response.json();
-    return token;
+    return await response.json();
   } catch (error: unknown) {
     logError('Error sign up:', error);
     throw error;
   }
 }
 
-async function signIn(signInUser: UserType) {
+async function signIn(signInUser: UserType): Promise<TokenType> {
   const fetchOptions = {
     method: 'POST',
     headers: {
@@ -42,10 +42,10 @@ async function signIn(signInUser: UserType) {
   try {
     const response = await fetch(url, fetchOptions);
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || `HTTP error! Status: ${response.status}`);
     }
-    const token = await response.json();
-    return token;
+    return await response.json();
   } catch (error: unknown) {
     logError('Error sign in:', error);
     throw error;

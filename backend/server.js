@@ -55,6 +55,7 @@ import usersUpdatePasswordRoute from './routes/users/updatePassword.js';
 import usersAdminResetPasswordRoute from './routes/users/adminResetPassword.js';
 import usersUpdateAvatarRoute from './routes/users/updateAvatar.js';
 import usersUpdateRoleRoute from './routes/users/updateRole.js';
+import usersUpdateApprovalRoute from './routes/users/updateApproval.js';
 import signUpRoute from './routes/users/signup.js';
 import signInRoute from './routes/users/signin.js';
 app.use('/users', usersIndexRoute(sequelize));
@@ -65,6 +66,7 @@ app.use('/users', usersUpdatePasswordRoute(sequelize));
 app.use('/users', usersAdminResetPasswordRoute(sequelize));
 app.use('/users', usersUpdateAvatarRoute(sequelize));
 app.use('/users', usersUpdateRoleRoute(sequelize));
+app.use('/users', usersUpdateApprovalRoute(sequelize));
 app.use('/users', signUpRoute(sequelize));
 app.use('/users', signInRoute(sequelize));
 

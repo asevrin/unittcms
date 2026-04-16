@@ -7,7 +7,15 @@ export type UserType = {
   password: string;
   username: string;
   role: number;
+  isApproved?: boolean;
   avatarPath: string | null;
+};
+
+export type SignUpResponse = {
+  requiresApproval: boolean;
+  access_token?: string;
+  expires_at?: number;
+  user: UserType;
 };
 
 export type TokenProps = {
@@ -64,6 +72,8 @@ export type AuthMessages = {
   emailNotExist: string;
   signupError: string;
   signinError: string;
+  signupPendingApproval: string;
+  approvalPending: string;
   demoPageWarning: string;
 };
 
@@ -74,14 +84,19 @@ export type AdminMessages = {
   email: string;
   username: string;
   role: string;
+  status: string;
   noUsersFound: string;
   administrator: string;
   user: string;
+  approved: string;
+  pendingApproval: string;
+  approve: string;
   quitAdmin: string;
   quit: string;
   quitConfirm: string;
   close: string;
   roleChanged: string;
+  userApproved: string;
   lostAdminAuth: string;
   atLeast: string;
   resetPassword: string;

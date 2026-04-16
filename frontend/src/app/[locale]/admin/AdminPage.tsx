@@ -9,7 +9,7 @@ import { TokenContext } from '@/utils/TokenProvider';
 import { useRouter } from '@/src/i18n/routing';
 import Config from '@/config/config';
 import { LocaleCodeType } from '@/types/locale';
-import { updateUserRole, adminResetPassword } from '@/utils/usersControl';
+import { updateUserRole, updateUserApproval, adminResetPassword } from '@/utils/usersControl';
 import { roles } from '@/config/selection';
 import { logError } from '@/utils/errorHandler';
 const apiServer = Config.apiServer;
@@ -101,6 +101,22 @@ export default function AdminPage({ messages, locale }: Props) {
     }
   };
 
+  const handleApproveUser = async (userEdit: UserType) => {
+    if (!tokenContext.isAdmin() || !userEdit.id) {
+      return;
+    }
+
+    const data = await updateUserApproval(tokenContext.token.access_token, userEdit.id, true);
+    if (data?.user) {
+      addToast({
+        title: 'Success',
+        color: 'success',
+        description: messages.userApproved,
+      });
+      setUsers((prevUsers) => prevUsers.map((user) => (user.id === userEdit.id ? { ...user, isApproved: true } : user)));
+    }
+  };
+
   const onQuitConfirm = async () => {
     if (myself && myself.id) {
       const userRoleIndex = roles.findIndex((entry) => entry.uid === 'user');
@@ -157,6 +173,7 @@ export default function AdminPage({ messages, locale }: Props) {
           users={users}
           myself={myself}
           onChangeRole={handleChangeRole}
+          onApproveUser={handleApproveUser}
           openResetDialog={openResetDialog}
           messages={messages}
         />

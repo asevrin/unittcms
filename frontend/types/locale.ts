@@ -1,4 +1,4 @@
-export type LocaleCodeType = 'de' | 'en' | 'pt-BR' | 'uk' | 'zh-CN' | 'ja';
+export type LocaleCodeType = 'en' | 'uk';
 
 export type LocaleType = {
   code: LocaleCodeType;

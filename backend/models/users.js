@@ -19,6 +19,11 @@ function defineUser(sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      isApproved: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       avatarPath: {
         type: DataTypes.STRING,
       },

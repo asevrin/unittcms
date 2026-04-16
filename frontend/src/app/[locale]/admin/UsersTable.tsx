@@ -22,17 +22,19 @@ type Props = {
   users: UserType[];
   myself: UserType | null;
   onChangeRole: (userEdit: UserType, role: number) => void;
+  onApproveUser: (userEdit: UserType) => void;
   openResetDialog: (user: UserType) => void;
   messages: AdminMessages;
 };
 
-export default function UsersTable({ users, myself, onChangeRole, openResetDialog, messages }: Props) {
+export default function UsersTable({ users, myself, onChangeRole, onApproveUser, openResetDialog, messages }: Props) {
   const headerColumns = [
     { name: messages.avatar, uid: 'avatar', sortable: false },
     { name: messages.id, uid: 'id', sortable: true },
     { name: messages.email, uid: 'email', sortable: true },
     { name: messages.username, uid: 'username', sortable: true },
     { name: messages.role, uid: 'role', sortable: true },
+    { name: messages.status, uid: 'status', sortable: false },
     { name: '', uid: 'actions', sortable: false },
   ];
 
@@ -93,6 +95,8 @@ export default function UsersTable({ users, myself, onChangeRole, openResetDialo
             </DropdownMenu>
           </Dropdown>
         );
+      case 'status':
+        return user.isApproved ? messages.approved : messages.pendingApproval;
 
       case 'actions':
         return (
@@ -104,6 +108,11 @@ export default function UsersTable({ users, myself, onChangeRole, openResetDialo
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Static Actions">
+                {!user.isApproved && (
+                  <DropdownItem key="approve" onPress={() => onApproveUser(user)}>
+                    {messages.approve}
+                  </DropdownItem>
+                )}
                 <DropdownItem key="edit" onPress={() => openResetDialog(user)}>
                   {messages.resetPassword}
                 </DropdownItem>

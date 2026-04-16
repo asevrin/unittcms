@@ -31,6 +31,8 @@ export default function Page({ params }: PageType) {
     emailNotExist: t('email_not_exist'),
     signupError: t('signup_error'),
     signinError: t('signin_error'),
+    signupPendingApproval: t('signup_pending_approval'),
+    approvalPending: t('approval_pending'),
     demoPageWarning: t('demo_page_warning'),
   };
   return (
