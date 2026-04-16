@@ -108,11 +108,11 @@ export default function UsersTable({ users, myself, onChangeRole, onApproveUser,
                 </Button>
               </DropdownTrigger>
               <DropdownMenu aria-label="Static Actions">
-                {!user.isApproved && (
+                {!user.isApproved ? (
                   <DropdownItem key="approve" onPress={() => onApproveUser(user)}>
                     {messages.approve}
                   </DropdownItem>
-                )}
+                ) : null}
                 <DropdownItem key="edit" onPress={() => openResetDialog(user)}>
                   {messages.resetPassword}
                 </DropdownItem>
