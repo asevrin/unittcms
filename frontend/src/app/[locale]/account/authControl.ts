@@ -61,8 +61,17 @@ async function signInAsGuest() {
     role: roles.findIndex((entry) => entry.uid === 'user'),
     avatarPath: '',
   };
-  const token = await signUp(guestUser);
-  return token;
+  const signUpResult = await signUp(guestUser);
+
+  if (!signUpResult.requiresApproval && signUpResult.access_token && signUpResult.expires_at) {
+    return {
+      access_token: signUpResult.access_token,
+      expires_at: signUpResult.expires_at,
+      user: signUpResult.user,
+    };
+  }
+
+  throw new Error('Guest sign in failed');
 }
 
 function generateRandomEmail() {
