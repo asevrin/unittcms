@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import de from './de.json';
 import en from './en.json';
 import ptBR from './pt-BR.json';
+import uk from './uk.json';
 import zhCN from './zh-CN.json';
 import ja from './ja.json';
 
@@ -21,6 +22,7 @@ describe('Locale message keys consistency', () => {
     { name: 'de', data: de },
     { name: 'en', data: en },
     { name: 'pt-BR', data: ptBR },
+    { name: 'uk', data: uk },
     { name: 'zh-CN', data: zhCN },
     { name: 'ja', data: ja },
   ];

@@ -18,6 +18,7 @@ const locales: LocaleType[] = [
   { code: 'de', name: 'Deutsch' },
   { code: 'en', name: 'English' },
   { code: 'pt-BR', name: 'Português' },
+  { code: 'uk', name: 'Українська' },
   { code: 'zh-CN', name: '简体中文' },
   { code: 'ja', name: '日本語' },
 ];
